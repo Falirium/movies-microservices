@@ -5,6 +5,7 @@ import java.util.Arrays;
 import com.microservices.tp.moviecatalogueservice.models.Rating;
 import com.microservices.tp.moviecatalogueservice.models.UserRating;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,14 @@ public class UserRatingProxy {
     @Autowired
     private RestTemplate restTemplate;
 
-    @HystrixCommand(fallbackMethod = "getFallBackUserRating")
+    @HystrixCommand(fallbackMethod = "getFallBackUserRating",
+        commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutMilliseconds", value = "2000"),
+            @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "5"),
+            @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "50"),
+            @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "5000")
+        }
+    )
     public UserRating getItemCatalog(String userId) {
         return restTemplate.getForObject("http://rating-data-service/ratingsdata/users/" + userId, UserRating.class);
     }
