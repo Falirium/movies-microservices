@@ -6,7 +6,7 @@ public class Movie {
     private String title;
     private String overview;
 
-    // testing things
+    // Default constructor & parameterized constructor
 
     public Movie() {
     }
@@ -17,6 +17,8 @@ public class Movie {
         this.title = title;
         this.overview = overview;
     }
+
+    // Getters & Setteres of attributs
 
     public String getMovieId() {
         return this.movieId;
